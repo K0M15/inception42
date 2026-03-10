@@ -1,0 +1,45 @@
+services:
+  nginx:
+    build: ./requirements/nginx
+    container_name: inception-nginx
+    ports:
+      - "443:443"
+    restart: always
+    networks:
+      - inception
+    volumes:
+      - /home/alain/Documents/dev/42Inception/data/html:/var/www/html:ro
+    depends_on:
+      - wordpress
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: inception-wordpress
+    environment:
+      - WORDPRESS_DB_HOST=mariadb:3306
+    env_file:
+      - .env
+      - ../secrets/.env
+    volumes:
+      # - /home/afelger/data/wordpress:/var/www/html
+      - /home/alain/Documents/dev/42Inception/data/html:/var/www/html:rw
+    networks:
+      - inception
+    restart: always
+    depends_on:
+      - mariadb
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: inception-mariadb
+    env_file:
+      - .env
+      - ../secrets/.env
+    volumes:
+      - /home/alain/Documents/dev/42Inception/data/mariadb:/var/lib/mysql
+    networks:
+      - inception
+    restart: always
+  # swarmpit: # bonus container
+
+networks:
+  inception:
+    driver: bridge

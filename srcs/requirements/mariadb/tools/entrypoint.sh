@@ -1,6 +1,16 @@
 #!/bin/bash
 set -e
 
+# Load Docker secrets into environment variables
+if [ -d "/run/secrets" ]; then
+    for secret in /run/secrets/*; do
+        if [ -f "$secret" ]; then
+            var_name=$(basename "$secret" | tr '[:lower:]' '[:upper:]')
+            export "$var_name"=$(cat "$secret")
+        fi
+    done
+fi
+
 # Wait for filesystem to be ready (optional but recommended)
 sleep 2
 

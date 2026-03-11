@@ -16,9 +16,16 @@ services:
     container_name: inception-wordpress
     environment:
       - WORDPRESS_DB_HOST=mariadb:3306
-    env_file:
-      - .env
-      - ../secrets/.env
+    secrets:
+      - wp_db_user
+      - wp_db_pass
+      - wp_admin_user
+      - wp_admin_pass
+      - wp_admin_mail
+      - wp_user_name
+      - wp_user_pass
+      - wp_user_mail
+      - wp_user_role
     volumes:
       # - /home/afelger/data/wordpress:/var/www/html
       - /home/alain/Documents/dev/42Inception/data/html:/var/www/html:rw
@@ -30,16 +37,50 @@ services:
   mariadb:
     build: ./requirements/mariadb
     container_name: inception-mariadb
-    env_file:
-      - .env
-      - ../secrets/.env
+    secrets:
+      - wp_db_user
+      - wp_db_pass
+      - admin_db_user
+      - admin_db_pass
     volumes:
       - /home/alain/Documents/dev/42Inception/data/mariadb:/var/lib/mysql
     networks:
       - inception
     restart: always
-  # swarmpit: # bonus container
+  # redis: # bonus container
+  # ftp: bonus
+  # adminer: bonus
+  # a static site: bonus
+  # service - : bonus
 
 networks:
   inception:
     driver: bridge
+
+secrets:
+  wp_db_user:
+    file: ../secrets/wp_db_user
+  wp_db_pass:
+    file: ../secrets/wp_db_pass
+  admin_db_user:
+    file: ../secrets/admin_db_user
+  admin_db_pass:
+    file: ../secrets/admin_db_pass
+  wp_admin_user:
+    file: ../secrets/wp_admin_user
+  wp_admin_pass:
+    file: ../secrets/wp_admin_pass
+  wp_admin_mail:
+    file: ../secrets/wp_admin_mail
+  wp_user_name:
+    file: ../secrets/wp_user_name
+  wp_user_pass:
+    file: ../secrets/wp_user_pass
+  wp_user_mail:
+    file: ../secrets/wp_user_mail
+  wp_user_role:
+    file: ../secrets/wp_user_role
+  ftp_user_name:
+    file: ../secrets/ftp_user_name
+  ftp_user_pass:
+    file: ../secrets/ftp_user_pass

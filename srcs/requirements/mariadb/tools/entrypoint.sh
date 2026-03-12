@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Wait for filesystem to be ready (optional but recommended)
+sleep 2
+
 # Load Docker secrets into environment variables
 if [ -d "/run/secrets" ]; then
     for secret in /run/secrets/*; do
@@ -11,12 +14,14 @@ if [ -d "/run/secrets" ]; then
     done
 fi
 
-# Wait for filesystem to be ready (optional but recommended)
-sleep 2
-
-# Check if the database has already been initialized
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    echo "Initializing MariaDB data directory..."
+# Check if the database has already been initialized by looking for our specific database
+if [ ! -d "/var/lib/mysql/${WP_DB_NAME:-wordpress}" ]; then
+    echo "Database not found. Initializing MariaDB data directory..."
+    
+    # Ensure directory exists and has correct permissions
+    mkdir -p /var/lib/mysql
+    chown -R mysql:mysql /var/lib/mysql
+    
     mariadb-install-db --user=mysql --datadir=/var/lib/mysql
 
     # Start MariaDB in background to set up database
@@ -28,6 +33,8 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     until mariadb-admin ping --silent; do
         sleep 1
     done
+
+    echo "WP DB NAME: " $WP_DB_NAME "WP DB USER" $WP_DB_USER
 
     # Create initialization SQL script
     cat << EOF > /tmp/init.sql
@@ -48,7 +55,7 @@ EOF
     wait "$pid"
     echo "MariaDB configuration finished."
 fi
-
+echo "WP DB NAME: " $WP_DB_NAME "WP DB USER" $WP_DB_USER
 # Run the final MariaDB command
 echo "Starting MariaDB..."
 exec mysqld --user=mysql --datadir=/var/lib/mysql --bind-address=0.0.0.0

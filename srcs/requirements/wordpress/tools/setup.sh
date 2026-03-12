@@ -17,8 +17,8 @@ export WP_DB_NAME=${WP_DB_NAME:-wordpress}
 # Wait for MariaDB to be available
 echo "Waiting for MariaDB..."
 DB_HOST_ONLY=$(echo "${WORDPRESS_DB_HOST:-mariadb}" | cut -d: -f1)
-while ! mariadb -h"$DB_HOST_ONLY" -u"$WP_DB_USER" -p"$WP_DB_PASS" -e "SELECT 1" &> /dev/null && \
-      ! mysql -h"$DB_HOST_ONLY" -u"$WP_DB_USER" -p"$WP_DB_PASS" -e "SELECT 1" &> /dev/null; do
+echo "HOST: " $DB_HOST_ONLY "USER: " $WP_DB_USER "PASS: " $WP_DB_PASS
+while ! mariadb -h"$DB_HOST_ONLY" -u"$WP_DB_USER" -p"$WP_DB_PASS" -e "SELECT 1" &> /dev/null; do \
     echo "MariaDB is unavailable - sleeping"
     sleep 2
 done
@@ -26,10 +26,12 @@ echo "MariaDB is ready!"
 
 cd /var/www/html
 
-if [ ! -f wp-config.php ]; then
+if [ ! -f wp-load.php ]; then
     echo "Downloading WordPress..."
     wp core download --allow-root
+fi
 
+if [ ! -f wp-config.php ]; then
     echo "Creating wp-config.php..."
     wp config create \
         --dbname="$WP_DB_NAME" \
@@ -37,7 +39,9 @@ if [ ! -f wp-config.php ]; then
         --dbpass="$WP_DB_PASS" \
         --dbhost="${WORDPRESS_DB_HOST:-mariadb}" \
         --allow-root
+fi
 
+if ! wp core is-installed --allow-root; then
     echo "Installing WordPress..."
     wp core install \
         --url="afelger.42.fr" \

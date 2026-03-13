@@ -58,20 +58,20 @@ services:
 networks:
   inception:
     driver: bridge
-    
+
 volumes:
-    db-data:
-        #driver: local
-        driver_opts:
-            type: 'none'
-            o: bind
-            device: /home/afelger/data/mariadb
-    wp-data:
-        #driver: local
-        driver_opts:
-            type: 'none'
-            o: bind
-            device: /home/afelger/data/wordpress
+  db-data:
+    #driver: local
+    driver_opts:
+      type: 'none'
+      o: bind
+      device: ${DATA_PATH}mariadb
+  wp-data:
+    #driver: local
+    driver_opts:
+      type: 'none'
+      o: bind
+      device: ${DATA_PATH}wordpress
 
 secrets:
   wp_db_user:

@@ -3,6 +3,9 @@
 **/secrets/
 srcs/.env
 
+# Make helper files
+.build_complete
+
 # Local volume mounts
 data/
 data/mariadb/

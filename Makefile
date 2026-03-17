@@ -1,7 +1,7 @@
 BUILD_MARKER := .build_complete
 SRC_FILES := srcs/docker-compose.yml srcs/requirements/mariadb/Dockerfile srcs/requirements/wordpress/Dockerfile srcs/requirements/nginx/Dockerfile
-export DATA_PATH = $(CURDIR)/data/
-# DATA_PATH = /home/afelger/data/
+#export DATA_PATH = $(CURDIR)/data/
+export DATA_PATH = /home/afelger/data/
 
 all: setup build run
 

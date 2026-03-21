@@ -29,4 +29,16 @@ http {
             fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
         }
     }
+    
+    server {
+        listen      81;
+        http2       on;
+        server_name af_portfolio.42.fr;
+
+        location / {
+            proxy_pass http://portfolio:81;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
 }

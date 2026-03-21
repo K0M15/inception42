@@ -4,6 +4,7 @@ services:
     container_name: nginx
     ports:
       - "443:443"
+      - "81:81"
     restart: always
     networks:
       - inception
@@ -11,6 +12,7 @@ services:
       - wp-data:/var/www/html:ro
     depends_on:
       - wordpress
+      - static_site
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
@@ -50,9 +52,36 @@ services:
       - inception
     restart: always
   # redis: # bonus container
-  # ftp: bonus
-  # adminer: bonus
-  # a static site: bonus
+  # ftp:
+  #   build: ./requirements/ftp
+  #   container_name: ftp
+  #   volumes:
+  #     - wp-data:/home/ftpuser/:rw
+  #   networks:
+  #     - inception
+  #   restart: always
+  #   depends_on:
+  #     - wordpress
+  #   secrets:
+  #     - ftp_user_pass
+  # adminer:
+  #   build: ./requirements/adminer
+  #   container_name: adminer
+  #   ports:
+  #     - "8080:8180"
+  #   restart: always
+  #   depends_on:
+  #     - mariadb
+  #   networks:
+  #     - inception
+  static_site:
+    build: ./requirements/bonus/static/
+    container_name: portfolio
+    networks:
+      - inception
+    restart: always
+    # depends_on:
+    #   - nginx
   # service - : bonus
 
 networks:
@@ -61,13 +90,11 @@ networks:
 
 volumes:
   db-data:
-    #driver: local
     driver_opts:
       type: 'none'
       o: bind
       device: ${DATA_PATH}mariadb
   wp-data:
-    #driver: local
     driver_opts:
       type: 'none'
       o: bind

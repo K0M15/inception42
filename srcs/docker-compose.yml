@@ -5,6 +5,7 @@ services:
     ports:
       - "443:443"
       - "81:81"
+      - "8180:8080"
     restart: always
     networks:
       - inception
@@ -13,6 +14,7 @@ services:
     depends_on:
       - wordpress
       - static_site
+      - adminer
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
@@ -64,16 +66,14 @@ services:
   #     - wordpress
   #   secrets:
   #     - ftp_user_pass
-  # adminer:
-  #   build: ./requirements/adminer
-  #   container_name: adminer
-  #   ports:
-  #     - "8080:8180"
-  #   restart: always
-  #   depends_on:
-  #     - mariadb
-  #   networks:
-  #     - inception
+  adminer:
+    build: ./requirements/bonus/adminer
+    container_name: adminer
+    restart: always
+    depends_on:
+      - mariadb
+    networks:
+      - inception
   static_site:
     build: ./requirements/bonus/static/
     container_name: portfolio

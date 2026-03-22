@@ -54,18 +54,23 @@ services:
       - inception
     restart: always
   # redis: # bonus container
-  # ftp:
-  #   build: ./requirements/ftp
-  #   container_name: ftp
-  #   volumes:
-  #     - wp-data:/home/ftpuser/:rw
-  #   networks:
-  #     - inception
-  #   restart: always
-  #   depends_on:
-  #     - wordpress
-  #   secrets:
-  #     - ftp_user_pass
+  ftp:
+    build: ./requirements/bonus/ftp
+    container_name: ftp
+    environment:
+      - NGINX_HOST=${NGINX_HOST:-localhost}
+    volumes:
+      - wp-data:/home/ftpuser/:rw
+    networks:
+      - inception
+    restart: always
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
+    depends_on:
+      - wordpress
+    secrets:
+      - ftp_user_pass
   adminer:
     build: ./requirements/bonus/adminer
     container_name: adminer

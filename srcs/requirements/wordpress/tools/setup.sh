@@ -57,17 +57,19 @@ if ! wp core is-installed --allow-root; then
         --role="${WP_USER_ROLE:-author}" \
         --allow-root
     
-    # Redis configuration
+fi
+
+if ! wp plugin is-installed redis-cache --allow-root; then
     echo "Configuring Redis..."
     wp config set WP_REDIS_HOST redis --allow-root
     wp config set WP_REDIS_PORT 6379 --raw --allow-root
     wp config set WP_CACHE true --raw --allow-root
     wp plugin install redis-cache --activate --allow-root
     wp redis enable --allow-root
-
-    # Ensure proper permissions
-    chown -R www-data:www-data /var/www/html
 fi
+
+# Ensure proper permissions
+chown -R www-data:www-data /var/www/html
 
 echo "Starting PHP-FPM..."
 # Find the installed php-fpm binary. In Debian it's usually /usr/sbin/php-fpm8.2 etc.

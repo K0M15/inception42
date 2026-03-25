@@ -44,7 +44,7 @@ fi
 if ! wp core is-installed --allow-root; then
     echo "Installing WordPress..."
     wp core install \
-        --url="afelger.42.fr" \
+        --url="${DOMAIN_NAME:-afelger.42.fr}" \
         --title="Inception" \
         --admin_user="${WP_ADMIN_USER:-admin}" \
         --admin_password="${WP_ADMIN_PASS:-adminpass}" \
@@ -57,6 +57,14 @@ if ! wp core is-installed --allow-root; then
         --role="${WP_USER_ROLE:-author}" \
         --allow-root
     
+    # Redis configuration
+    echo "Configuring Redis..."
+    wp config set WP_REDIS_HOST redis --allow-root
+    wp config set WP_REDIS_PORT 6379 --raw --allow-root
+    wp config set WP_CACHE true --raw --allow-root
+    wp plugin install redis-cache --activate --allow-root
+    wp redis enable --allow-root
+
     # Ensure proper permissions
     chown -R www-data:www-data /var/www/html
 fi

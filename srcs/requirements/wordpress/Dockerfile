@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     tar \
     gzip \
-    mariadb-client
+    mariadb-client \
+    php-redis
 
 RUN mkdir -p /var/www/html
 RUN mkdir -p /run/php

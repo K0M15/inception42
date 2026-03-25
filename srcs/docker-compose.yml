@@ -21,6 +21,7 @@ services:
     environment:
       - WORDPRESS_DB_HOST=mariadb:3306
       - WP_DB_NAME=wordpress
+      - DOMAIN_NAME=${DOMAIN_NAME}
     secrets:
       - wp_db_user
       - wp_db_pass
@@ -38,6 +39,9 @@ services:
     restart: always
     depends_on:
       - mariadb
+      - redis
+    extra_hosts:
+      - "${DOMAIN_NAME}:host-gateway"
   mariadb:
     build: ./requirements/mariadb
     container_name: mariadb
@@ -53,7 +57,12 @@ services:
     networks:
       - inception
     restart: always
-  # redis: # bonus container
+  redis:
+    build: ./requirements/bonus/redis
+    container_name: redis
+    restart: always
+    networks:
+      - inception
   ftp:
     build: ./requirements/bonus/ftp
     container_name: ftp

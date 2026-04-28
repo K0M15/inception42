@@ -4,8 +4,6 @@ services:
     container_name: nginx
     ports:
       - "443:443"
-      - "81:81"
-      - "8180:8080"
     restart: always
     networks:
       - inception
@@ -13,8 +11,8 @@ services:
       - wp-data:/var/www/html:ro
     depends_on:
       - wordpress
-      - static_site
       - adminer
+      - static_site
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress

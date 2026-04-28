@@ -68,10 +68,8 @@ if ! wp plugin is-installed redis-cache --allow-root; then
     wp redis enable --allow-root
 fi
 
-# Ensure proper permissions
 chown -R www-data:www-data /var/www/html
 
 echo "Starting PHP-FPM..."
-# Find the installed php-fpm binary. In Debian it's usually /usr/sbin/php-fpm8.2 etc.
 PHP_FPM=$(find /usr/sbin -name "php-fpm*" -type f | head -n 1)
 exec "$PHP_FPM" -F
